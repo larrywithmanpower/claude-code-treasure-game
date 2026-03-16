@@ -1,3 +1,8 @@
+---
+name: deploy-github-page
+description: Deploy the current project to GitHub Pages and return the live URL. Use when the user wants to publish their project online via GitHub Pages.
+---
+
 Deploy this project to GitHub Pages and return the live URL when done.
 
 Follow these steps carefully, in order:

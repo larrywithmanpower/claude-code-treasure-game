@@ -12,6 +12,7 @@ interface Box {
   id: number;
   isOpen: boolean;
   hasTreasure: boolean;
+  penalty: number;
 }
 
 export default function App() {
@@ -22,10 +23,13 @@ export default function App() {
   const initializeGame = () => {
     // Randomly assign treasure to one box
     const treasureBoxIndex = Math.floor(Math.random() * 3);
+    const skeletonPenalties = [-50, -100].sort(() => Math.random() - 0.5);
+    let skeletonIndex = 0;
     const newBoxes: Box[] = Array.from({ length: 3 }, (_, index) => ({
       id: index,
       isOpen: false,
       hasTreasure: index === treasureBoxIndex,
+      penalty: index === treasureBoxIndex ? 0 : skeletonPenalties[skeletonIndex++],
     }));
     
     setBoxes(newBoxes);
@@ -44,7 +48,7 @@ export default function App() {
     setBoxes(prevBoxes => {
       const updatedBoxes = prevBoxes.map(box => {
         if (box.id === boxId && !box.isOpen) {
-          const newScore = box.hasTreasure ? score + 100 : score - 50;
+          const newScore = box.hasTreasure ? score + 100 : score + box.penalty;
           setScore(newScore);
           new Audio(box.hasTreasure ? chestOpenSound : evilLaughSound).play();
           return { ...box, isOpen: true };
@@ -75,7 +79,7 @@ export default function App() {
           Click on the treasure chests to discover what's inside!
         </p>
         <p className="text-amber-700 text-sm">
-          💰 Treasure: +$100 | 💀 Skeleton: -$50
+          💰 Treasure: +$100 | 💀 Skeleton: -$50 or -$100
         </p>
       </div>
 
@@ -166,7 +170,7 @@ export default function App() {
                           : 'bg-red-100 text-red-800 border border-red-300'
                       }`}
                     >
-                      {box.hasTreasure ? '+$100' : '-$50'}
+                      {box.hasTreasure ? '+$100' : `$${box.penalty}`}
                     </motion.div>
                   ) : (
                     <div className="text-amber-700 p-2">
